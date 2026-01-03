@@ -219,7 +219,15 @@ You are a helpful assistant. The assistant first performs a detailed, step-by-st
             early_stopping=True,
             repetition_penalty=repetition_penalty,
         )
-        logging.info("Using generation config: %s", generation_config)
+        logging.info(
+            "Using generation config (temperature=%s, top_p=%s, top_k=%s, num_beams=%s, repetition_penalty=%s, max_new_tokens=%s)",
+            temperature,
+            top_p,
+            top_k,
+            num_beams,
+            repetition_penalty,
+            max_new_tokens,
+        )
         for idx in tqdm(range(len(self.prepared))):
             inputs = self.prepared[idx]
             input_ids = inputs["input_ids"].to(self.model.device)

@@ -10,8 +10,6 @@ from tqdm import tqdm
 import re, random
 from common import *  # assume conv_judge_pair and related variables are defined in common
 
-import logging
-
 def seed_everything(seed):
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
@@ -213,18 +211,26 @@ You are a helpful assistant. The assistant first performs a detailed, step-by-st
         repetition_penalty=1.2,
     ):
         generated = []
-
+        generation_config = GenerationConfig(
+            temperature=temperature,
+            top_p=top_p,
+            top_k=top_k,
+            num_beams=num_beams,
+            early_stopping=True,
+            repetition_penalty=repetition_penalty,
+        )
+        logging.info(
+            "Using generation config (temperature=%s, top_p=%s, top_k=%s, num_beams=%s, repetition_penalty=%s, max_new_tokens=%s)",
+            temperature,
+            top_p,
+            top_k,
+            num_beams,
+            repetition_penalty,
+            max_new_tokens,
+        )
         for idx in tqdm(range(len(self.prepared))):
             inputs = self.prepared[idx]
             input_ids = inputs["input_ids"].to(self.model.device)
-            generation_config = GenerationConfig(
-                temperature=temperature,
-                top_p=top_p,
-                top_k=top_k,
-                num_beams=num_beams,
-                early_stopping=True,
-                repetition_penalty=repetition_penalty,
-            )
             with torch.no_grad():
                 generation_output = self.model.generate(
                     input_ids=input_ids,
@@ -292,5 +298,6 @@ if __name__ == "__main__":
     if args.output_path:
         with open(args.output_path, "w") as f:
             json.dump(results, f)
+        logging.info(f"Results saved to {args.output_path}")
     else:
         print(results)

@@ -225,6 +225,7 @@ You are a helpful assistant. The assistant first performs a detailed, step-by-st
                 early_stopping=True,
                 repetition_penalty=repetition_penalty,
             )
+            logging.info("Using generation config: %s", generation_config)
             with torch.no_grad():
                 generation_output = self.model.generate(
                     input_ids=input_ids,
@@ -292,5 +293,6 @@ if __name__ == "__main__":
     if args.output_path:
         with open(args.output_path, "w") as f:
             json.dump(results, f)
+        logging.info(f"Results saved to {args.output_path}")
     else:
         print(results)
